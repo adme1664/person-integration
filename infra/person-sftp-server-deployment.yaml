@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: person-sftp-server
+  labels:
+    app: person-sftp-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: person-sftp-server
+  template:
+    metadata:
+      labels:
+        app: person-sftp-server
+    spec:
+      containers:
+        - name: person-sftp-server
+          command:
+            - "test:pass"
+          image: atmoz/sftp:latest
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /home/person/mft-uber-folder
+              name: persons
+              readOnly: false
+          ports:
+            - containerPort: 22
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+      volumes:
+        - name: persons
+          hostPath:
+            path: /run/desktop/mnt/host/c/tmp/persons/persons-files
+            type: DirectoryOrCreate
+
